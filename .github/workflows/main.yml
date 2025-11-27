@@ -8,6 +8,8 @@ on:
     branches: [ "main" ]
 
 jobs:
+
+  # JOB 1: INTEGRATION (CI)
   integration:
     runs-on: ubuntu-latest
     steps:
@@ -28,20 +30,20 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Run Unit Tests
       run: |
-        pytest
+        pytest test.py
 
+
+  # JOB 2: DELIVERY (CD)
   delivery:
     needs: integration
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
